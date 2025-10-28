@@ -1,0 +1,14 @@
+{
+    "configurations": [
+        {
+            "type": "java",
+            "name": "Spring Boot-EquiposDeFutbolApplication<API>",
+            "request": "launch",
+            "cwd": "${workspaceFolder}",
+            "mainClass": "dux.API.EquiposDeFutbolApplication",
+            "projectName": "API",
+            "args": "",
+            "envFile": "${workspaceFolder}/.env"
+        }
+    ]
+}
