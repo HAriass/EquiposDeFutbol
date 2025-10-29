@@ -127,4 +127,91 @@ public class EquipoServiceImplTest {
         // Verificación de que NUNCA se intentó guardar
         verify(equipoRepository, never()).save(any(Equipo.class));
     }
+
+    // TESTS PARA update(Long id, CreateEquipoDTO)
+    @Test
+    @DisplayName("update - Debería actualizar un equipo existente y devolverlo")
+    void update_shouldUpdateExistingEquipo_andReturnIt() {
+        // ARRANGE
+        // 1. Simular el equipo que se encuentra inicialmente en la DB (findById)
+        when(equipoRepository.findById(EQUIPO_ID)).thenReturn(Optional.of(EQUIPO_MOCK));
+
+        // 2. Crear el DTO con los nuevos datos
+        CreateEquipoDTO dtoActualizado = new CreateEquipoDTO("Manchester Utd", "Inglaterra", "Premier League");
+
+        // 3. Simular el guardado: el save debe devolver la instancia modificada.
+        when(equipoRepository.save(any(Equipo.class))).thenAnswer(invocation -> invocation.getArgument(0));
+
+        // ACT
+        Equipo resultado = equipoService.update(EQUIPO_ID, dtoActualizado);
+
+        // ASSERT
+        assertNotNull(resultado);
+        // Verificar que los campos fueron actualizados
+        assertEquals(EQUIPO_ID, resultado.getId()); // El ID debe ser el mismo
+        assertEquals("Manchester Utd", resultado.getNombre());
+        assertEquals("Premier League", resultado.getLiga());
+        assertEquals("Inglaterra", resultado.getPais());
+
+        // Verificar interacciones
+        verify(equipoRepository, times(1)).findById(EQUIPO_ID);
+        verify(equipoRepository, times(1)).save(any(Equipo.class));
+    }
+
+    @Test
+    @DisplayName("update - Debería lanzar RecursoNoEncontradoException si el equipo a actualizar no existe")
+    void update_shouldThrowException_whenEquipoNotExists() {
+        // ARRANGE
+        // findById, que es llamado por update, simula no encontrar el recurso
+        when(equipoRepository.findById(EQUIPO_ID)).thenReturn(Optional.empty());
+
+        // ACT & ASSERT
+        assertThrows(RecursoNoEncontradoException.class, () -> {
+            equipoService.update(EQUIPO_ID, DTO_MOCK);
+        });
+
+        // Verificar que el método save NUNCA se llama
+        verify(equipoRepository, never()).save(any(Equipo.class));
+    }
+
+    // =========================================================================================
+    //                            TESTS PARA delete(Long id)
+    // =========================================================================================
+
+    @Test
+    @DisplayName("delete - Debería eliminar un equipo existente")
+    void delete_shouldDeleteExistingEquipo_whenExists() {
+        // ARRANGE
+        // 1. Simular el equipo que se encuentra (findById)
+        when(equipoRepository.findById(EQUIPO_ID)).thenReturn(Optional.of(EQUIPO_MOCK));
+        
+        // 2. No necesitamos simular el delete porque es un método 'void' (no devuelve nada),
+        // solo verificamos que fue llamado.
+
+        // ACT
+        // El método es void, solo lo llamamos.
+        equipoService.delete(EQUIPO_ID);
+
+        // ASSERT
+        // Verificar que findById fue llamado para obtener el equipo
+        verify(equipoRepository, times(1)).findById(EQUIPO_ID);
+        // Verificar que el método delete() del repositorio fue llamado con la instancia correcta
+        verify(equipoRepository, times(1)).delete(EQUIPO_MOCK);
+    }
+
+    @Test
+    @DisplayName("delete - Debería lanzar RecursoNoEncontradoException si el equipo a eliminar no existe")
+    void delete_shouldThrowException_whenEquipoNotExists() {
+        // ARRANGE
+        // findById simula no encontrar el recurso
+        when(equipoRepository.findById(EQUIPO_ID)).thenReturn(Optional.empty());
+
+        // ACT & ASSERT
+        assertThrows(RecursoNoEncontradoException.class, () -> {
+            equipoService.delete(EQUIPO_ID);
+        });
+
+        // Verificar que el método delete NUNCA se llama
+        verify(equipoRepository, never()).delete(any(Equipo.class));
+    }
 }
