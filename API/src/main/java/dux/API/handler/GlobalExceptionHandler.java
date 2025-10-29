@@ -2,6 +2,8 @@ package dux.API.handler;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.http.converter.HttpMessageNotReadableException;
+import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
@@ -12,20 +14,16 @@ import dux.API.equiposDeFutbol.exception.RecursoNoEncontradoException;
 public class GlobalExceptionHandler {
 
     @ExceptionHandler(RecursoNoEncontradoException.class)
-    // 1. El tipo de retorno ahora es ResponseEntity<ErrorResponse>
     public ResponseEntity<ErrorResponse> handleRecursoNoEncontradoException(
         RecursoNoEncontradoException ex) {
 
-        // 2. Definimos el código de estado HTTP (404)
         HttpStatus status = HttpStatus.NOT_FOUND;
         
-        // 3. Creamos la instancia de ErrorResponse con los datos requeridos
         ErrorResponse errorResponse = new ErrorResponse(
-            "Equipo no encontrado", // El mensaje fijo que solicitaste
-            status.value()          // El valor entero del código HTTP (404)
+            ex.getMessage(), 
+            status.value()          
         );
         
-        // 4. Devolvemos el objeto ErrorResponse y el código 404
         return new ResponseEntity<>(errorResponse, status);
     }
 
@@ -43,4 +41,34 @@ public class GlobalExceptionHandler {
         return new ResponseEntity<>(errorResponse, status);
     }
     
+    //Maneja errores de validacion de datos
+    @ExceptionHandler(MethodArgumentNotValidException.class)
+    public ResponseEntity<ErrorResponse> handleValidationExceptions(
+        MethodArgumentNotValidException ex) {
+
+        HttpStatus status = HttpStatus.BAD_REQUEST;
+        
+        ErrorResponse errorResponse = new ErrorResponse(
+            "La solicitud es invalida", 
+            status.value()              
+        );
+        
+        return new ResponseEntity<>(errorResponse, status);
+    }
+
+    //Maneja errores de JSON mal formateado
+    @ExceptionHandler(HttpMessageNotReadableException.class)
+    public ResponseEntity<ErrorResponse> handleHttpMessageNotReadable(
+        HttpMessageNotReadableException ex) {
+
+        // Si Spring no puede leer el JSON, significa que la solicitud es incorrecta.
+        HttpStatus status = HttpStatus.BAD_REQUEST;
+        
+        ErrorResponse errorResponse = new ErrorResponse(
+            "La solicitud es invalida", // Mensaje fijo para el 400
+            status.value()              // Código 400
+        );
+        
+        return new ResponseEntity<>(errorResponse, status);
+    }
 }

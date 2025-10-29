@@ -23,7 +23,11 @@ public class EquipoServiceImpl implements EquipoService {
     }
 
     public Equipo findById(Long id) {
-        return this.equipoRepository.findById(id).orElseThrow(() -> new RecursoNoEncontradoException("Equipo no encontrado con id: " + id));
+        return this.equipoRepository.findById(id).orElseThrow(() -> new RecursoNoEncontradoException("Equipo no encontrado"));
+    }
+
+    public Equipo findByNombre(String nombre) {
+        return this.equipoRepository.findByNombre(nombre).orElseThrow(() -> new RecursoNoEncontradoException("No se encontro ningun equipo."));
     }
 
     public Equipo save(CreateEquipoDTO equipoDTO) {
@@ -38,6 +42,21 @@ public class EquipoServiceImpl implements EquipoService {
         }
         
         return equipoRepository.save(equipo);
+    }
+
+    public Equipo update(Long id, CreateEquipoDTO equipoDTO) {
+        Equipo equipoExistente = this.findById(id);
+
+        equipoExistente.setNombre(equipoDTO.getNombre());
+        equipoExistente.setLiga(equipoDTO.getLiga());
+        equipoExistente.setPais(equipoDTO.getPais());
+
+        return this.equipoRepository.save(equipoExistente);
+    }
+
+    public void delete(Long id) {
+        Equipo equipoExistente = this.findById(id);
+        this.equipoRepository.delete(equipoExistente);
     }
     
 }
