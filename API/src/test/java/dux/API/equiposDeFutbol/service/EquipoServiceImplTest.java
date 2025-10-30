@@ -133,13 +133,10 @@ public class EquipoServiceImplTest {
     @DisplayName("update - Debería actualizar un equipo existente y devolverlo")
     void update_shouldUpdateExistingEquipo_andReturnIt() {
         // ARRANGE
-        // 1. Simular el equipo que se encuentra inicialmente en la DB (findById)
         when(equipoRepository.findById(EQUIPO_ID)).thenReturn(Optional.of(EQUIPO_MOCK));
 
-        // 2. Crear el DTO con los nuevos datos
-        CreateEquipoDTO dtoActualizado = new CreateEquipoDTO("Manchester Utd", "Inglaterra", "Premier League");
+        CreateEquipoDTO dtoActualizado = new CreateEquipoDTO("Manchester Utd", "Premier League", "Inglaterra");
 
-        // 3. Simular el guardado: el save debe devolver la instancia modificada.
         when(equipoRepository.save(any(Equipo.class))).thenAnswer(invocation -> invocation.getArgument(0));
 
         // ACT
@@ -174,28 +171,19 @@ public class EquipoServiceImplTest {
         verify(equipoRepository, never()).save(any(Equipo.class));
     }
 
-    // =========================================================================================
-    //                            TESTS PARA delete(Long id)
-    // =========================================================================================
+    //TESTS PARA delete(Long id)
 
     @Test
     @DisplayName("delete - Debería eliminar un equipo existente")
     void delete_shouldDeleteExistingEquipo_whenExists() {
         // ARRANGE
-        // 1. Simular el equipo que se encuentra (findById)
         when(equipoRepository.findById(EQUIPO_ID)).thenReturn(Optional.of(EQUIPO_MOCK));
         
-        // 2. No necesitamos simular el delete porque es un método 'void' (no devuelve nada),
-        // solo verificamos que fue llamado.
-
         // ACT
-        // El método es void, solo lo llamamos.
         equipoService.delete(EQUIPO_ID);
 
         // ASSERT
-        // Verificar que findById fue llamado para obtener el equipo
         verify(equipoRepository, times(1)).findById(EQUIPO_ID);
-        // Verificar que el método delete() del repositorio fue llamado con la instancia correcta
         verify(equipoRepository, times(1)).delete(EQUIPO_MOCK);
     }
 
@@ -203,7 +191,6 @@ public class EquipoServiceImplTest {
     @DisplayName("delete - Debería lanzar RecursoNoEncontradoException si el equipo a eliminar no existe")
     void delete_shouldThrowException_whenEquipoNotExists() {
         // ARRANGE
-        // findById simula no encontrar el recurso
         when(equipoRepository.findById(EQUIPO_ID)).thenReturn(Optional.empty());
 
         // ACT & ASSERT
