@@ -26,3 +26,8 @@ INSERT INTO equipos (id, nombre, liga, pais) VALUES
 (24, 'Atlético Madrid', 'La Liga', 'España');
 
 ALTER TABLE EQUIPOS ALTER COLUMN ID RESTART WITH 25;
+
+INSERT INTO users (id, username, password, nombre, apellido, pais, role) VALUES
+(1, 'test', '$2a$10$LjDdUvmBf4g/KkQNq1CVc.4wRYumGoVrlw7ZXoGu/GXA7iaksGpfG', 'hernan', 'arias', 'argentina', 'USER');
+
+ALTER TABLE users ALTER COLUMN ID RESTART WITH 2;
