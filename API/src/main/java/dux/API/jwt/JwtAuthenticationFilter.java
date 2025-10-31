@@ -3,6 +3,7 @@ package dux.API.jwt;
 import java.io.IOException;
 
 import org.springframework.http.HttpHeaders;
+import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -12,6 +13,9 @@ import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
 import org.springframework.web.filter.OncePerRequestFilter;
 
+import io.jsonwebtoken.ExpiredJwtException;
+import io.jsonwebtoken.MalformedJwtException;
+import io.jsonwebtoken.security.SignatureException;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
@@ -27,38 +31,49 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter{
 
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain)
-        throws ServletException, IOException {
+            throws ServletException, IOException {
 
         final String token = getTokenFromRequest(request);
-        final String username;
 
-        if (token==null){
+        if (token == null) {
             filterChain.doFilter(request, response);
-            return; // le devuelvo el control a la cadena de filtros
+            return; 
         }
 
-        username = jwtService.getUsernameFromToken(token);
+        try {
+            final String username = jwtService.getUsernameFromToken(token);
 
-        if(username != null && SecurityContextHolder.getContext().getAuthentication() == null){
-            UserDetails userDetails = userDetailsService.loadUserByUsername(username);
+            if (username != null && SecurityContextHolder.getContext().getAuthentication() == null) {
+                UserDetails userDetails = userDetailsService.loadUserByUsername(username);
 
-            if(jwtService.isTokenValid(token, userDetails)){
-                UsernamePasswordAuthenticationToken authToken = new UsernamePasswordAuthenticationToken(
-                    userDetails,
-                    null, 
-                    userDetails.getAuthorities()
-                );
+                if (jwtService.isTokenValid(token, userDetails)) {
+                    UsernamePasswordAuthenticationToken authToken = new UsernamePasswordAuthenticationToken(
+                            userDetails,
+                            null, 
+                            userDetails.getAuthorities()
+                    );
 
-                authToken.setDetails(
-                    new WebAuthenticationDetailsSource().buildDetails(request)
-                );
+                    authToken.setDetails(
+                            new WebAuthenticationDetailsSource().buildDetails(request)
+                    );
 
-                SecurityContextHolder.getContext().setAuthentication(authToken);
+                    SecurityContextHolder.getContext().setAuthentication(authToken);
+                } else {
+                    // Si el token es "válido" en formato pero no pasa la validación (ej. firma)
+                    // Lanzamos una excepción para que la maneje el EntryPoint
+                    throw new BadCredentialsException("Token JWT inválido");
+                }
             }
+            
+            filterChain.doFilter(request, response);
+
+        } catch (ExpiredJwtException e) {
+            throw new BadCredentialsException("Token JWT expirado", e);
+        } catch (SignatureException | MalformedJwtException e) {
+            throw new BadCredentialsException("Token JWT inválido", e);
+        } catch (Exception e) {
+            throw new BadCredentialsException("Error de autenticación", e);
         }
-
-        filterChain.doFilter(request, response);
-
     }
 
     private String getTokenFromRequest(HttpServletRequest request) {

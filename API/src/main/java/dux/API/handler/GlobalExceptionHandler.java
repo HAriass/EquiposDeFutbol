@@ -7,7 +7,6 @@ import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
-import dux.API.auth.exception.AutenticacionFallidaException;
 import dux.API.equiposDeFutbol.exception.ConflictException;
 import dux.API.equiposDeFutbol.exception.RecursoNoEncontradoException;
 
@@ -73,17 +72,4 @@ public class GlobalExceptionHandler {
         return new ResponseEntity<>(errorResponse, status);
     }
 
-    @ExceptionHandler(AutenticacionFallidaException.class)
-    public ResponseEntity<ErrorResponse> handleAutenticacionFallidaException(
-        AutenticacionFallidaException ex) {
-
-        HttpStatus status = HttpStatus.UNAUTHORIZED;
-        
-        ErrorResponse errorResponse = new ErrorResponse(
-            ex.getMessage(), 
-            status.value()          
-        );
-        
-        return new ResponseEntity<>(errorResponse, status);
-    }
 }

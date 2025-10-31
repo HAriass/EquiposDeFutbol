@@ -6,7 +6,6 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
-import dux.API.auth.exception.AutenticacionFallidaException;
 import dux.API.equiposDeFutbol.exception.RecursoNoEncontradoException;
 import dux.API.jwt.JwtService;
 import dux.API.user.Role;
