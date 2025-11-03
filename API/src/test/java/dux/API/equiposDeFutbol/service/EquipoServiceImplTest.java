@@ -21,10 +21,10 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import dux.API.equiposDeFutbol.DTO.CreateEquipoDTO;
-import dux.API.equiposDeFutbol.exception.ConflictException;
-import dux.API.equiposDeFutbol.exception.RecursoNoEncontradoException;
 import dux.API.equiposDeFutbol.model.Equipo;
 import dux.API.equiposDeFutbol.repository.EquipoRepository;
+import dux.API.exception.ConflictException;
+import dux.API.exception.RecursoNoEncontradoException;
 
 @ExtendWith(MockitoExtension.class)
 public class EquipoServiceImplTest {

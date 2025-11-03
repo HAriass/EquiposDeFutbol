@@ -1,4 +1,4 @@
-package dux.API.auth.exception;
+package dux.API.jwt;
 
 import java.io.IOException;
 import org.springframework.security.core.AuthenticationException;

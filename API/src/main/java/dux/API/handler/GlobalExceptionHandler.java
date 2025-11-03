@@ -7,8 +7,8 @@ import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
-import dux.API.equiposDeFutbol.exception.ConflictException;
-import dux.API.equiposDeFutbol.exception.RecursoNoEncontradoException;
+import dux.API.exception.ConflictException;
+import dux.API.exception.RecursoNoEncontradoException;
 
 @RestControllerAdvice
 public class GlobalExceptionHandler {

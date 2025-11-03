@@ -5,10 +5,10 @@ import java.util.List;
 import org.springframework.stereotype.Service;
 
 import dux.API.equiposDeFutbol.DTO.CreateEquipoDTO;
-import dux.API.equiposDeFutbol.exception.ConflictException;
-import dux.API.equiposDeFutbol.exception.RecursoNoEncontradoException;
 import dux.API.equiposDeFutbol.model.Equipo;
 import dux.API.equiposDeFutbol.repository.EquipoRepository;
+import dux.API.exception.ConflictException;
+import dux.API.exception.RecursoNoEncontradoException;
 
 @Service
 public class EquipoServiceImpl implements EquipoService {

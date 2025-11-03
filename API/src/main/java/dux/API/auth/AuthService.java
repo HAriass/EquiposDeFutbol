@@ -6,7 +6,8 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
-import dux.API.equiposDeFutbol.exception.RecursoNoEncontradoException;
+import dux.API.exception.ConflictException;
+import dux.API.exception.RecursoNoEncontradoException;
 import dux.API.jwt.JwtService;
 import dux.API.user.Role;
 import dux.API.user.User;
@@ -33,6 +34,11 @@ public class AuthService {
     }
 
     public AuthResponse register(RegisterRequest request) {
+
+        if (userRepository.findByUsername(request.getUsername()).isPresent()) {
+        // 2. Lanzar una excepción específica para el conflicto 409
+        throw new ConflictException("El nombre de usuario '" + request.getUsername() + "' ya está registrado.");
+    }
         User user = User.builder()
                 .username(request.getUsername())
                 .password(passwordEncoder.encode(request.getPassword()))
@@ -41,8 +47,6 @@ public class AuthService {
                 .pais(request.getPais())
                 .role(Role.USER)
                 .build();
-
-        System.out.println(user.getPassword());
 
         userRepository.save(user);
 

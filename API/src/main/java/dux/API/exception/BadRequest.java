@@ -1,4 +1,4 @@
-package dux.API.equiposDeFutbol.exception;
+package dux.API.exception;
 
 public class BadRequest extends RuntimeException {
     public BadRequest(String message) {
