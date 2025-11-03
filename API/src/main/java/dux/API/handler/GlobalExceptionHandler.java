@@ -61,12 +61,11 @@ public class GlobalExceptionHandler {
     public ResponseEntity<ErrorResponse> handleHttpMessageNotReadable(
         HttpMessageNotReadableException ex) {
 
-        // Si Spring no puede leer el JSON, significa que la solicitud es incorrecta.
         HttpStatus status = HttpStatus.BAD_REQUEST;
         
         ErrorResponse errorResponse = new ErrorResponse(
-            "La solicitud es invalida", // Mensaje fijo para el 400
-            status.value()              // Código 400
+            "La solicitud es invalida", 
+            status.value()
         );
         
         return new ResponseEntity<>(errorResponse, status);

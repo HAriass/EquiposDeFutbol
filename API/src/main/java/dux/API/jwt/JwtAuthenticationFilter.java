@@ -59,8 +59,6 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter{
 
                     SecurityContextHolder.getContext().setAuthentication(authToken);
                 } else {
-                    // Si el token es "válido" en formato pero no pasa la validación (ej. firma)
-                    // Lanzamos una excepción para que la maneje el EntryPoint
                     throw new BadCredentialsException("Token JWT inválido");
                 }
             }

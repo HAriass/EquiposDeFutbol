@@ -25,7 +25,7 @@ public class JwtAuthenticationEntryPoint implements AuthenticationEntryPoint {
         // Tu JSON personalizado
         String jsonError = String.format(
             "{\"mensaje\": \"Autenticación fallida: %s\", \"codigo\": %d}",
-            "Token inválido o expirado", // Puedes usar authException.getMessage() si quieres más detalle
+            authException.getMessage(), // Puedes usar authException.getMessage() si quieres más detalle
             HttpServletResponse.SC_UNAUTHORIZED
         );
         
